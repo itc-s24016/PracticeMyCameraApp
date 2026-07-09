@@ -5,12 +5,16 @@ import android.util.Log
 import androidx.camera.core.ImageCapture
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.google.common.util.concurrent.ListenableFuture
 
 data class CameraState(
-    val content: Context,
+    val context: Context,
     val cameraProviderFuture: ListenableFuture<ProcessCameraProvider>,
     val lifecycleOwner: LifecycleOwner,
     val imageCapture: ImageCapture
@@ -43,4 +47,20 @@ data class CameraState(
         )
         return previewView
     }
+}
+
+@Composable
+fun rememberCameraState(
+    context: Context = LocalContext.current,
+    cameraProviderFuture: ListenableFuture<ProcessCameraProvider> =
+        ProcessCameraProvider.getInstance(context),
+    lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current,
+    imageCapture: ImageCapture = ImageCapture.Builder().build()
+) = remember(context, cameraProviderFuture, lifecycleOwner) {
+    CameraState(
+        context = context,
+        cameraProviderFuture = cameraProviderFuture,
+        lifecycleOwner = lifecycleOwner,
+        imageCapture = imageCapture
+    )
 }
