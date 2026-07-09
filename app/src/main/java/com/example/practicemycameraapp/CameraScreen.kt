@@ -11,13 +11,16 @@ import androidx.compose.runtime.setValue
 @Composable
 fun CameraScreen() {
     var isGranted by remember{ mutableStateOf(false) }
+    val cameraState = rememberCameraState()
     PermissionHandler { granted ->
         isGranted = granted
     }
 
     if (isGranted){
         Box(){
-            Text(text = "カメラの権限を確認できました")
+            PreviewCamera { ctx ->
+                cameraState.startCamera(ctx)
+            }
         }
     } else {
         Text(text = "カメラの権限がありません")
